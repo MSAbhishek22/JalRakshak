@@ -2,15 +2,15 @@
 
 <div align="center">
 
-[![Build](https://github.com/MSAbhishek22/jalrakshak/actions/workflows/ci.yml/badge.svg)](https://github.com/MSAbhishek22/jalrakshak/actions)
-[![Tests](https://img.shields.io/badge/tests-21%20passing-brightgreen)](https://github.com/MSAbhishek22/jalrakshak/actions)
-[![PWA Ready](https://img.shields.io/badge/PWA-Ready-0F766E)](https://jalrakshak.vercel.app)
+[![Build](https://github.com/MSAbhishek22/JalRakshak/actions/workflows/ci.yml/badge.svg)](https://github.com/MSAbhishek22/JalRakshak/actions)
+[![Tests](https://img.shields.io/badge/tests-21%20passing-brightgreen)](https://github.com/MSAbhishek22/JalRakshak/actions)
+[![PWA Ready](https://img.shields.io/badge/PWA-Ready-0F766E)](https://jalrakshak-amber.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 **AI-powered water-and-soil guardian for India's 140 million smallholder farmers.**  
 **Works in Hindi, Bengali, Marathi, Punjabi & English. Offline-capable. Free.**
 
-[🌐 Live App](https://jalrakshak.vercel.app) • [📱 Demo](https://jalrakshak.vercel.app/?demo=true) • [📋 Play Store Listing](PLAY_STORE_LISTING.md)
+[🌐 Live App](https://jalrakshak-amber.vercel.app) • [📱 Demo](https://jalrakshak-amber.vercel.app/?demo=true) • [📋 Play Store Listing](PLAY_STORE_LISTING.md)
 
 </div>
 
@@ -29,6 +29,18 @@ Getting these wrong costs real money. One mistimed irrigation cycle wastes **₹
 Existing government apps (Kisan Suvidha, mKisan) are slow, English-heavy, and abandoned after launch. **There is no voice-first, multilingual, AI-powered tool built specifically for the smallholder farmer.**
 
 **Until now.**
+
+---
+
+## 📜 Origin Story — From Monsoon Mitra to JalRakshak
+
+JalRakshak began its life as **Monsoon Mitra** (मानसून मित्र) — a monsoon-focused "rain friend" built during a hackathon to answer one simple question: *"Should I irrigate today?"*
+
+But farmers don't just need rain advice during monsoon season. They need help year-round — with water management, soil health, fertilizer dosing, market prices, and navigating the maze of government schemes they're entitled to but rarely access.
+
+So Monsoon Mitra evolved into **JalRakshak (जल रक्षक)** — the "water and soil guardian." The name change reflects a broader mission: **protect India's most precious resources — water, soil, and the farmer who tends both.**
+
+The full commit history from `Initial commit` → `v1.0.0` → `JalRakshak rebrand` is preserved in this repository. Every line of code tells the story of that evolution.
 
 ---
 
@@ -62,6 +74,8 @@ JalRakshak is a **Progressive Web App** that acts as every farmer's personal wat
 | 📴 **Offline Mode** | Critical info available even with no internet — built for rural India. |
 | 🎤 **Voice-First** | Central mic button. Speak your question. Get an answer. No typing needed. |
 | 🌍 **5 Languages** | Hindi · Bengali · Marathi · Punjabi · English |
+| 📋 **Schemes & Subsidies** | Real government schemes (PMKSY, PM-KISAN, Soil Health Card) with eligibility and links. |
+| 📊 **Impact Dashboard** | Water saved = X days of village drinking water. Relatable, motivating equivalents. |
 
 ---
 
@@ -102,7 +116,7 @@ Privacy: Zero PII collected | All data stays on device | No registration
 ## 🚀 Getting Started
 
 ```bash
-git clone https://github.com/MSAbhishek22/jalrakshak.git
+git clone https://github.com/MSAbhishek22/JalRakshak.git
 cd jalrakshak
 npm install
 cp .env.example .env.local   # Fill in your API keys
@@ -112,7 +126,7 @@ npm run dev
 Visit `http://localhost:5173` — the app loads instantly.
 
 ### Try the Demo
-Visit **[jalrakshak.vercel.app/?demo=true](https://jalrakshak.vercel.app/?demo=true)** to see the app populated with 15 days of real-looking farmer data — water savings counter animating, irrigation log filled, weather live.
+Visit **[jalrakshak-amber.vercel.app/?demo=true](https://jalrakshak-amber.vercel.app/?demo=true)** to see the app populated with 15 days of real-looking farmer data — water savings counter animating, irrigation log filled, weather live.
 
 ---
 
