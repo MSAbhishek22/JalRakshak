@@ -64,15 +64,22 @@ function sanitizeHistoryEntry(entry) {
   };
 }
 
-// ─── Allowed CORS origins ────────────────────────────────────────────────────
 const ALLOWED_ORIGINS = [
   'https://jalrakshak.vercel.app',
+  'https://jalrakshak-amber.vercel.app',
   'https://monsoonmitra.vercel.app',
   'https://monsoon-mitr.vercel.app',
   'http://localhost:3000',
   'http://localhost:5173',
   'http://localhost:4173',
 ];
+
+function isOriginAllowed(origin) {
+  if (!origin) return true;
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  if (/^https:\/\/jalrakshak[a-z0-9\-]*\.vercel\.app$/.test(origin)) return true;
+  return false;
+}
 
 // ─── Main handler ────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
@@ -93,8 +100,8 @@ export default async function handler(req, res) {
 
   // Determine origin and set CORS
   const origin = req.headers['origin'] || '';
-  if (ALLOWED_ORIGINS.includes(origin)) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
+  if (isOriginAllowed(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*');
   }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -158,7 +165,6 @@ export default async function handler(req, res) {
 
   // Build Gemini request
   const systemPrompt = buildSystemPrompt(cleanLanguage, cleanCrop, cleanWeather);
-  const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
 
   const contents = [
     ...cleanHistory.map(m => ({
@@ -184,40 +190,53 @@ export default async function handler(req, res) {
   };
 
   try {
-    console.log('Sending to Gemini:', {
-      language: cleanLanguage,
-      crop: cleanCrop,
-      messageLength: cleanMessage.length,
-      historyLength: cleanHistory.length,
-      model: 'gemini-2.0-flash'
-    });
+    const candidateModels = ['gemini-flash-latest', 'gemini-3.6-flash'];
+    let replyText = null;
+    let usageMetadata = null;
+    let lastError = null;
 
-    const geminiRes = await fetch(geminiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(geminiPayload),
-      signal: AbortSignal.timeout(20000), // 20s timeout
-    });
+    for (const model of candidateModels) {
+      try {
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+        console.log(`Sending to Gemini (${model}):`, {
+          language: cleanLanguage,
+          crop: cleanCrop,
+          messageLength: cleanMessage.length,
+          historyLength: cleanHistory.length,
+        });
 
-    console.log('Gemini response status:', geminiRes.status);
+        const geminiRes = await fetch(geminiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(geminiPayload),
+          signal: AbortSignal.timeout(20000), // 20s timeout
+        });
 
-    const geminiData = await geminiRes.json();
+        const geminiData = await geminiRes.json();
 
-    if (!geminiRes.ok) {
-      console.error('[chat.js] Gemini API error:', geminiData?.error?.message);
-      return res.status(500).json({ error: 'AI service error', fallback: true });
+        if (geminiRes.ok && geminiData?.candidates?.[0]?.content?.parts?.[0]?.text) {
+          replyText = geminiData.candidates[0].content.parts[0].text;
+          usageMetadata = geminiData.usageMetadata || null;
+          console.log(`Gemini response received from ${model}. Reply length: ${replyText.length}`);
+          break;
+        } else {
+          lastError = geminiData?.error?.message || `HTTP ${geminiRes.status}`;
+          console.warn(`[chat.js] Gemini model ${model} failed: ${lastError}`);
+        }
+      } catch (err) {
+        lastError = err.message;
+        console.warn(`[chat.js] Error calling ${model}: ${err.message}`);
+      }
     }
 
-    const replyText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
-    console.log('Reply length:', replyText?.length);
     if (!replyText) {
-      console.warn('[chat.js] Empty Gemini response:', JSON.stringify(geminiData));
-      return res.status(500).json({ error: 'Empty AI response', fallback: true });
+      console.error('[chat.js] All Gemini candidate models failed. Last error:', lastError);
+      return res.status(500).json({ error: 'AI service error: ' + (lastError || 'Empty response'), fallback: true });
     }
 
     return res.status(200).json({
       reply: replyText,
-      tokens: geminiData.usageMetadata || null,
+      tokens: usageMetadata,
     });
 
   } catch (error) {
