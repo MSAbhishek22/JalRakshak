@@ -1,7 +1,7 @@
 const STRINGS = {
   HI: {
-    appTitle: 'मॉनसून मित्र',
-    appTag: 'किसानों का मौसम साथी',
+    appTitle: 'जल रक्षक',
+    appTag: 'जल और मिट्टी का रक्षक',
     changeLanguage: 'भाषा बदलें',
     installApp: 'ऐप इंस्टॉल करें',
     weatherUpdate: 'मौसम जानकारी',
@@ -27,8 +27,8 @@ const STRINGS = {
     offlineWord: 'ऑफलाइन',
   },
   EN: {
-    appTitle: 'Monsoon Mitra',
-    appTag: "Farmer's Weather Companion",
+    appTitle: 'JalRakshak',
+    appTag: 'Water & Soil Guardian',
     changeLanguage: 'Change Language',
     installApp: 'Install App',
     weatherUpdate: 'Weather Update',
@@ -53,9 +53,9 @@ const STRINGS = {
     online: 'Online',
     offlineWord: 'Offline',
   },
-  BN: { appTitle: 'মনসুন মিত্র', appTag: 'কৃষকের আবহাওয়া সাথী', changeLanguage: 'ভাষা পরিবর্তন', installApp: 'অ্যাপ ইনস্টল করুন', weatherUpdate: 'আবহাওয়ার খবর', liveWeather: 'লাইভ আবহাওয়া', rainProb: 'বৃষ্টির সম্ভাবনা', humidity: 'আর্দ্রতা', currentTemp: 'বর্তমান তাপমাত্রা', sevenDay: '৭ দিনের পূর্বাভাস', temp: 'তাপমাত্রা', forecastLoading: 'লোড হচ্ছে...', dataNA: 'ডেটা পাওয়া যায়নি', tryAgain: 'আবার চেষ্টা করুন', askAI: 'এআই সহায়ক', askPlaceholder: 'আপনার প্রশ্ন করুন…', ask: 'জিজ্ঞেস করুন', listen: 'শুনুন', sources: 'উৎস: IMD/FAO/ICAR', recent: 'সাম্প্রতিক', favorite: 'পছন্দ', saved: 'সংরক্ষিত', offline: 'আপনি অফলাইন, শেষ পরামর্শ দেখানো হচ্ছে', online: 'অনলাইন', offlineWord: 'অফলাইন' },
-  MR: { appTitle: 'मान्सून मित्र', appTag: 'शेतकऱ्यांचा हवामान साथी', changeLanguage: 'भाषा बदला', installApp: 'अ‍ॅप इन्स्टॉल करा', weatherUpdate: 'हवामान माहिती', liveWeather: 'लाईव्ह हवामान', rainProb: 'पावसाची शक्यता', humidity: 'आर्द्रता', currentTemp: 'सध्याचे तापमान', sevenDay: '७ दिवसांचा अंदाज', temp: 'तापमान', forecastLoading: 'लोड होत आहे...', dataNA: 'डेटा उपलब्ध नाही', tryAgain: 'पुन्हा प्रयत्न करा', askAI: 'एआय सहाय्यक', askPlaceholder: 'प्रश्न विचारा…', ask: 'विचारा', listen: 'ऐका', sources: 'स्रोत: IMD/FAO/ICAR', recent: 'अलीकडील', favorite: 'आवडते', saved: 'जतन केले', offline: 'तुम्ही ऑफलाइन आहात, शेवटचा सल्ला दाखवला जात आहे', online: 'ऑनलाइन', offlineWord: 'ऑफलाइन' },
-  PA: { appTitle: 'ਮੌਨਸੂਨ ਮਿਤਰ', appTag: 'ਕਿਸਾਨਾਂ ਦਾ ਮੌਸਮ ਸਾਥੀ', changeLanguage: 'ਭਾਸ਼ਾ ਬਦਲੋ', installApp: 'ਐਪ ਇੰਸਟਾਲ ਕਰੋ', weatherUpdate: 'ਮੌਸਮ ਜਾਣਕਾਰੀ', liveWeather: 'ਲਾਈਵ ਮੌਸਮ', rainProb: 'ਬਰਸਾਤ ਸੰਭਾਵਨਾ', humidity: 'ਨਾਂਮੀ', currentTemp: 'ਮੌਜੂਦਾ ਤਾਪਮਾਨ', sevenDay: '7 ਦਿਨਾਂ ਦਾ ਅਨੁਮਾਨ', temp: 'ਤਾਪਮਾਨ', forecastLoading: 'ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...', dataNA: 'ਡਾਟਾ ਨਹੀਂ ਮਿਲਿਆ', tryAgain: 'ਫਿਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ', askAI: 'ਏਆਈ ਸਹਾਇਕ', askPlaceholder: 'ਆਪਣਾ ਸਵਾਲ ਪੁੱਛੋ…', ask: 'ਪੁੱਛੋ', listen: 'ਸੁਣੋ', sources: 'ਸਰੋਤ: IMD/FAO/ICAR', recent: 'ਤਾਜ਼ਾ', favorite: 'ਪਸੰਦੀਦਾ', saved: 'ਸੰਭਾਲਿਆ', offline: 'ਤੁਸੀਂ ਆਫਲਾਈਨ ਹੋ, ਆਖ਼ਰੀ ਸਲਾਹ ਦਿਖਾਈ ਜਾ ਰਹੀ ਹੈ', online: 'ਆਨਲਾਈਨ', offlineWord: 'ਆਫਲਾਈਨ' },
+  BN: { appTitle: 'জলরক্ষক', appTag: 'জল ও মাটির অভিভাবক', changeLanguage: 'ভাষা পরিবর্তন', installApp: 'অ্যাপ ইনস্টল করুন', weatherUpdate: 'আবহাওয়ার খবর', liveWeather: 'লাইভ আবহাওয়া', rainProb: 'বৃষ্টির সম্ভাবনা', humidity: 'আর্দ্রতা', currentTemp: 'বর্তমান তাপমাত্রা', sevenDay: '৭ দিনের পূর্বাভাস', temp: 'তাপমাত্রা', forecastLoading: 'লোড হচ্ছে...', dataNA: 'ডেটা পাওয়া যায়নি', tryAgain: 'আবার চেষ্টা করুন', askAI: 'এআই সহায়ক', askPlaceholder: 'আপনার প্রশ্ন করুন…', ask: 'জিজ্ঞেস করুন', listen: 'শুনুন', sources: 'উৎস: IMD/FAO/ICAR', recent: 'সাম্প্রতিক', favorite: 'পছন্দ', saved: 'সংরক্ষিত', offline: 'আপনি অফলাইন, শেষ পরামর্শ দেখানো হচ্ছে', online: 'অনলাইন', offlineWord: 'অফলাইন' },
+  MR: { appTitle: 'जलरक्षक', appTag: 'जल आणि मातीचा रक्षक', changeLanguage: 'भाषा बदला', installApp: 'अ‍ॅप इन्स्टॉल करा', weatherUpdate: 'हवामान माहिती', liveWeather: 'लाईव्ह हवामान', rainProb: 'पावसाची शक्यता', humidity: 'आर्द्रता', currentTemp: 'सध्याचे तापमान', sevenDay: '७ दिवसांचा अंदाज', temp: 'तापमान', forecastLoading: 'लोड होत आहे...', dataNA: 'डेटा उपलब्ध नाही', tryAgain: 'पुन्हा प्रयत्न करा', askAI: 'एआय सहाय्यक', askPlaceholder: 'प्रश्न विचारा…', ask: 'विचारा', listen: 'ऐका', sources: 'स्रोत: IMD/FAO/ICAR', recent: 'अलीकडील', favorite: 'आवडते', saved: 'जतन केले', offline: 'तुम्ही ऑफलाइन आहात, शेवटचा सल्ला दाखवला जात आहे', online: 'ऑनलाइन', offlineWord: 'ऑफलाइन' },
+  PA: { appTitle: 'ਜਲਰਕਸ਼ਕ', appTag: 'ਪਾਣੀ ਅਤੇ ਮਿੱਟੀ ਦਾ ਰਾਖਾ', changeLanguage: 'ਭਾਸ਼ਾ ਬਦਲੋ', installApp: 'ਐਪ ਇੰਸਟਾਲ ਕਰੋ', weatherUpdate: 'ਮੌਸਮ ਜਾਣਕਾਰੀ', liveWeather: 'ਲਾਈਵ ਮੌਸਮ', rainProb: 'ਬਰਸਾਤ ਸੰਭਾਵਨਾ', humidity: 'ਨਾਂਮੀ', currentTemp: 'ਮੌਜੂਦਾ ਤਾਪਮਾਨ', sevenDay: '7 ਦਿਨਾਂ ਦਾ ਅਨੁਮਾਨ', temp: 'ਤਾਪਮਾਨ', forecastLoading: 'ਲੋਡ ਹੋ ਰਿਹਾ ਹੈ...', dataNA: 'ਡਾਟਾ ਨਹੀਂ ਮਿਲਿਆ', tryAgain: 'ਫਿਰ ਕੋਸ਼ਿਸ਼ ਕਰੋ', askAI: 'ਏਆਈ ਸਹਾਇਕ', askPlaceholder: 'ਆਪਣਾ ਸਵਾਲ ਪੁੱਛੋ…', ask: 'ਪੁੱਛੋ', listen: 'ਸੁਣੋ', sources: 'ਸਰੋਤ: IMD/FAO/ICAR', recent: 'ਤਾਜ਼ਾ', favorite: 'ਪਸੰਦੀਦਾ', saved: 'ਸੰਭਾਲਿਆ', offline: 'ਤੁਸੀਂ ਆਫਲਾਈਨ ਹੋ, ਆਖ਼ਰੀ ਸਲਾਹ ਦਿਖਾਈ ਜਾ ਰਹੀ ਹੈ', online: 'ਆਨਲਾਈਨ', offlineWord: 'ਆਫਲਾਈਨ' },
 }
 
 export function t(lang = 'HI', key) {

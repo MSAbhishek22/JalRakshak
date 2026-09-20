@@ -3,8 +3,8 @@ import hi from './hi';
 
 const mr = {
   ...hi,
-  appTitle: 'मान्सून मित्र',
-  appTag: 'शेतकऱ्यांचा डिजिटल साथी',
+  appTitle: 'जल रक्षक',
+  appTag: 'जल आणि मातीचा रक्षक',
   goodMorning: 'सुप्रभात!',
   goodAfternoon: 'नमस्कार!',
   goodEvening: 'शुभ संध्याकाळ!',

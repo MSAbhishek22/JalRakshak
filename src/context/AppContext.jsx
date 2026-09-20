@@ -14,23 +14,26 @@ const DEFAULT_USER = {
 };
 
 export function AppProvider({ children }) {
+  const isDemo = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('demo') === 'true';
+
   const [user, setUser] = useState(() => {
     try {
       return {
-        name: localStorage.getItem('user_name') || '',
-        crops: JSON.parse(localStorage.getItem('user_crops') || '[]'),
+        name: localStorage.getItem('user_name') || (isDemo ? 'राम कुमार' : ''),
+        crops: JSON.parse(localStorage.getItem('user_crops') || (isDemo ? '["गेहूं", "धान"]' : '[]')),
         language: localStorage.getItem('user_language') || 'hi',
         location: JSON.parse(localStorage.getItem('user_location') || 'null') || { lat: 28.6139, lng: 77.2090, city: 'Delhi', state: 'Delhi' },
-        onboardingDate: localStorage.getItem('onboarding_date') || null
+        onboardingDate: localStorage.getItem('onboarding_date') || (isDemo ? new Date().toISOString() : null)
       };
     } catch(e) {
       return DEFAULT_USER;
     }
   });
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTabState] = useState('home');
   const [alerts, setAlerts] = useState([]);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [onboardingComplete, setOnboardingComplete] = useState(() => {
+    if (isDemo) return true;
     return storage.get('onboarding_complete', false);
   });
   const [notificationSettings, setNotificationSettings] = useState(() => {
@@ -41,6 +44,36 @@ export function AppProvider({ children }) {
       weather: true
     });
   });
+
+  const setActiveTab = useCallback((tab, options = {}) => {
+    setActiveTabState(prev => {
+      if (prev !== tab) {
+        if (!options.skipHistory && typeof window !== 'undefined') {
+          window.history.pushState({ tab, page: 'app' }, '', '');
+        }
+        return tab;
+      }
+      return prev;
+    });
+  }, []);
+
+  // Synchronize browser history popstate (handles browser/hardware back button)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && !window.history.state) {
+      window.history.replaceState({ tab: 'home', page: 'app' }, '', '');
+    }
+
+    const handlePopState = (e) => {
+      if (e.state?.tab) {
+        setActiveTabState(e.state.tab);
+      } else {
+        setActiveTabState('home');
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
 
 

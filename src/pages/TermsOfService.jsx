@@ -56,7 +56,7 @@ export default function TermsOfService({ onBack }) {
 
         <Section title="1. स्वीकृति / Acceptance">
           <p>इस ऐप का उपयोग करके आप इन शर्तों को मानते हैं।</p>
-          <p>By using Monsoon Mitra, you agree to these Terms of Service. If you do not agree, please do not use the app.</p>
+          <p>By using JalRakshak, you agree to these Terms of Service. If you do not agree, please do not use the app.</p>
         </Section>
 
         <Section title="2. ऐप का उपयोग / Use of App">

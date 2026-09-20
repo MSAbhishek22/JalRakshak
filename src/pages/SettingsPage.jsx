@@ -1,11 +1,13 @@
-// src/pages/SettingsPage.jsx — Section 15 spec
 import React, { useState } from 'react';
+import { ArrowLeft, ChevronDown } from 'lucide-react';
 import { useApp, useT } from '../context/AppContext';
 import { SettingsRow } from '../components/SettingsPanel';
 import { getCropName } from '../utils/cropData';
 import { trackEvent, EVENTS } from '../firebase/analytics';
 import { storage } from '../utils/storage';
 import { useLocation as useGeoLocation } from '../hooks/useLocation';
+import Tappable from '../components/common/Tappable';
+import { INDIAN_STATES_AND_DISTRICTS } from '../data/indianLocations';
 
 function Toggle({ value, onChange }) {
   return (
@@ -15,7 +17,7 @@ function Toggle({ value, onChange }) {
       role="switch"
       style={{
         width: '44px', height: '24px', borderRadius: '12px',
-        background: value ? '#2E7D32' : '#BDBDBD',
+        background: value ? '#0F766E' : '#CBD5E1',
         border: 'none', cursor: 'pointer', position: 'relative',
         transition: 'background 200ms ease', padding: 0,
         flexShrink: 0
@@ -26,14 +28,14 @@ function Toggle({ value, onChange }) {
         background: '#FFFFFF', position: 'absolute', top: '2px',
         left: value ? '22px' : '2px',
         transition: 'left 200ms ease',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
+        boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
       }} />
     </button>
   );
 }
 
-export default function SettingsPage({ onNavigate }) {
-  const { user, updateUser, notificationSettings, updateNotificationSettings, clearAllData, onboardingComplete } = useApp();
+export default function SettingsPage({ onNavigate, onBack }) {
+  const { user, updateUser, clearAllData, setActiveTab } = useApp();
   const t = useT();
   const lang = user.language || 'hi';
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -44,6 +46,11 @@ export default function SettingsPage({ onNavigate }) {
   const [cityInput, setCityInput] = useState('');
   const [gpsLoading, setGpsLoading] = useState(false);
   const { requestLocation } = useGeoLocation();
+
+  // Location selector state
+  const [settingStateCode, setSettingStateCode] = useState('UP');
+  const currentSettingState = INDIAN_STATES_AND_DISTRICTS.find(s => s.code === settingStateCode) || INDIAN_STATES_AND_DISTRICTS[0];
+  const [settingDistrictName, setSettingDistrictName] = useState(currentSettingState.districts[0]?.name || 'मेरठ (Meerut)');
 
   const [showNameModal, setShowNameModal] = useState(false);
   const [nameInput, setNameInput] = useState(localStorage.getItem('user_name') || '');
@@ -62,7 +69,7 @@ export default function SettingsPage({ onNavigate }) {
     { emoji: '🌽', name: 'मक्का' }, { emoji: '🥕', name: 'सब्जियां' }, { emoji: '🥔', name: 'आलू' },
     { emoji: '🍅', name: 'टमाटर' }, { emoji: '➕', name: 'अन्य' }
   ];
-  
+
   const [notifPrefs, setNotifPrefs] = useState(
     () => storage.get('notification_prefs') || { flood: true, drought: true, irrigation: false, weather: false }
   );
@@ -77,9 +84,9 @@ export default function SettingsPage({ onNavigate }) {
   const handleShare = async () => {
     trackEvent(EVENTS.APP_SHARED);
     const data = {
-      title: 'Monsoon Mitra — किसान का डिजिटल साथी',
-      text: 'खेती के लिए AI सहायक। मौसम, सिंचाई, फसल सुरक्षा — हिंदी में। मुफ्त!',
-      url: 'https://monsoonmitra.vercel.app'
+      title: 'JalRakshak — जल और मिट्टी का रक्षक',
+      text: 'खेती के लिए AI सहायक। मौसम, पानी की बचत, फसल सुरक्षा — हिंदी में। मुफ्त!',
+      url: 'https://jalrakshak.vercel.app'
     };
     if (navigator.share) {
       try { await navigator.share(data); } catch (e) { if (e.name !== 'AbortError') navigator.clipboard?.writeText(data.url); }
@@ -100,30 +107,49 @@ export default function SettingsPage({ onNavigate }) {
   const joinMonth = new Date(joinDate).toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-IN', { month: 'long', year: 'numeric' });
 
   return (
-    <div className="bg-[#F1F8E9] min-h-screen scroll-container" style={{ paddingBottom: 'max(80px, calc(64px + env(safe-area-inset-bottom)))' }}>
+    <div className="bg-surface-light min-h-screen scroll-container pb-24" style={{ paddingBottom: 'max(88px, calc(68px + env(safe-area-inset-bottom)))' }}>
       {nameToast && (
-        <div style={{ position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)', width: 'max-content', maxWidth: '400px', background: '#1B5E20', color: '#FFF', padding: '12px 24px', borderRadius: '24px', fontSize: '14px', fontWeight: 600, zIndex: 1000, whiteSpace: 'nowrap', boxShadow: '0 4px 20px rgba(0,0,0,0.3)' }}>
+        <div style={{ position: 'fixed', top: '20px', left: '50%', transform: 'translateX(-50%)', width: 'max-content', maxWidth: '400px', background: '#0F766E', color: '#FFF', padding: '12px 24px', borderRadius: '24px', fontSize: '14px', fontWeight: 600, zIndex: 1000, whiteSpace: 'nowrap', boxShadow: '0 4px 20px rgba(15,118,110,0.3)' }}>
           ✅ नाम सेव हो गया!
         </div>
       )}
 
+      {/* Top Header Bar with Back Button */}
+      <div className="flex items-center gap-3 px-4 pt-3 pb-1">
+        <Tappable
+          onClick={() => onBack ? onBack() : setActiveTab('home')}
+          className="w-10 h-10 rounded-full bg-white border border-slate-200 shadow-card flex items-center justify-center text-slate-700"
+          ariaLabel="Back to Home"
+        >
+          <ArrowLeft size={20} />
+        </Tappable>
+        <div>
+          <h1 className="text-lg font-black text-slate-900 leading-tight">
+            {t('settings') || 'सेटिंग्स व प्रोफ़ाइल'}
+          </h1>
+          <p className="text-[11px] text-teal-700 font-semibold">
+            किसान जानकारी व प्राथमिकताएं
+          </p>
+        </div>
+      </div>
+
       {/* Profile Card */}
-      <div className="rounded-[20px] mx-4 mt-4 p-6" style={{ background: 'linear-gradient(135deg, #2E7D32, #388E3C)' }}>
+      <div className="rounded-3xl mx-4 mt-4 p-5 shadow-card" style={{ background: 'linear-gradient(135deg, #0F766E, #115E59)' }}>
         <div className="flex items-center gap-4">
-          <div className="w-[60px] h-[60px] rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center">
-            <span className="text-[28px] font-bold text-white">{user.name ? user.name.charAt(0).toUpperCase() : '🌾'}</span>
+          <div className="w-[56px] h-[56px] rounded-full bg-white/20 border-2 border-white/40 flex items-center justify-center shadow-xs">
+            <span className="text-[26px] font-bold text-white">{user.name ? user.name.charAt(0).toUpperCase() : '💧'}</span>
           </div>
           <div>
-            <p className="text-xl font-bold text-white">{user.name || t('dearFarmer')}</p>
-            <p className="text-sm text-white/80">📍 {user.location?.city || 'Delhi'}{user.location?.state ? `, ${user.location.state}` : ''}</p>
-            <p className="text-xs text-white/65">{t('memberSince')} {joinMonth}</p>
+            <p className="text-lg font-black text-white leading-tight">{user.name || t('dearFarmer')}</p>
+            <p className="text-xs text-teal-100 mt-0.5">📍 {user.location?.city || 'Delhi'}{user.location?.state ? `, ${user.location.state}` : ''}</p>
+            <p className="text-[11px] text-teal-200/75 mt-1">{t('memberSince')} {joinMonth}</p>
           </div>
         </div>
       </div>
 
       {/* My Info */}
-      <div className="mx-4 mt-4 bg-white rounded-2xl shadow-card overflow-hidden">
-        <h3 className="text-base font-bold text-[#1A1A1A] px-4 pt-4 pb-2">{t('myInfo')}</h3>
+      <div className="mx-4 mt-4 bg-white rounded-2xl shadow-card overflow-hidden border border-slate-100">
+        <h3 className="text-sm font-bold text-slate-900 px-4 pt-4 pb-2">{t('myInfo')}</h3>
         <SettingsRow icon="👤" label={t('name')} value={user.name || t('setIt')} chevron onClick={() => setShowNameModal(true)} />
         <SettingsRow icon="🌾" label={t('crop')} value={user.crops?.map(c => getCropName(c, lang)).join(', ') || t('setIt')} chevron onClick={() => setShowCropPicker(true)} />
         <SettingsRow icon="📍" label={t('location')} value={user.location?.city || 'Delhi'} chevron onClick={() => setShowLocationPicker(true)} />
@@ -131,62 +157,59 @@ export default function SettingsPage({ onNavigate }) {
       </div>
 
       {showNameModal && (
-        <div style={{ position: 'fixed', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', background: 'rgba(0,0,0,0.6)', zIndex: 900, display: 'flex', alignItems: 'flex-end' }} onClick={() => setShowNameModal(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#FFFFFF', borderRadius: '24px 24px 0 0', padding: '28px 20px 40px', width: '100%', boxShadow: '0 -8px 32px rgba(0,0,0,0.2)' }}>
-            <h3 style={{ fontSize: '20px', fontWeight: 800, color: '#0D1B0D', marginBottom: '6px' }}>👤 अपना नाम बताएं</h3>
-            <p style={{ fontSize: '14px', color: '#5A7A5A', marginBottom: '20px' }}>यह नाम होम स्क्रीन पर दिखेगा</p>
+        <div style={{ position: 'fixed', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', background: 'rgba(15,23,42,0.6)', zIndex: 900, display: 'flex', alignItems: 'flex-end' }} onClick={() => setShowNameModal(false)}>
+          <div onClick={e => e.stopPropagation()} className="bg-white rounded-t-3xl p-6 w-full shadow-modal animate-slide-up">
+            <h3 style={{ fontSize: '18px', fontWeight: 800, color: '#0F172A', marginBottom: '4px' }}>👤 अपना नाम बताएं</h3>
+            <p style={{ fontSize: '13px', color: '#64748B', marginBottom: '18px' }}>यह नाम होम स्क्रीन और किसान चौपाल पर दिखेगा</p>
             <input
               autoFocus
               type="text"
               value={nameInput}
               onChange={e => setNameInput(e.target.value)}
               placeholder="जैसे: रामजी लाल"
-              style={{ width: '100%', height: '52px', border: '2px solid #C8E6C9', borderRadius: '12px', padding: '0 16px', fontSize: '16px', fontFamily: 'inherit', outline: 'none', marginBottom: '16px', boxSizing: 'border-box' }}
-              onFocus={e => e.target.style.borderColor = '#2E7D32'}
-              onBlur={e => e.target.style.borderColor = '#C8E6C9'}
+              className="w-full h-12 border-2 border-teal-100 focus:border-teal-600 rounded-xl px-4 text-base mb-4 outline-none text-slate-800"
             />
-            <button onClick={() => {
+            <Tappable onClick={() => {
               const trimmed = nameInput.trim();
               localStorage.setItem('user_name', trimmed);
-              // Update context
               if (typeof updateUser === 'function') updateUser({ name: trimmed });
               setShowNameModal(false);
               setNameToast(true);
               setTimeout(() => setNameToast(false), 2500);
-            }} style={{ width: '100%', height: '52px', background: 'linear-gradient(135deg, #1B5E20, #2E7D32)', color: '#FFF', border: 'none', borderRadius: '12px', fontSize: '17px', fontWeight: 700, cursor: 'pointer', marginBottom: '10px' }}>
+            }} className="w-full h-12 bg-teal-700 text-white rounded-xl text-base font-bold shadow-btn mb-2">
               ✅ सेव करें
-            </button>
-            <button onClick={() => setShowNameModal(false)} style={{ width: '100%', height: '44px', background: 'none', border: 'none', color: '#9E9E9E', fontSize: '15px', cursor: 'pointer' }}>
+            </Tappable>
+            <Tappable onClick={() => setShowNameModal(false)} className="w-full h-10 text-slate-500 text-sm">
               रद्द करें
-            </button>
+            </Tappable>
           </div>
         </div>
       )}
 
       {/* Language Picker */}
       {showLangPicker && (
-        <div style={{ position: 'fixed', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', background: 'rgba(0,0,0,0.55)', zIndex: 500, display: 'flex', alignItems: 'flex-end' }}
+        <div style={{ position: 'fixed', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', background: 'rgba(15,23,42,0.6)', zIndex: 900, display: 'flex', alignItems: 'flex-end' }}
           onClick={() => setShowLangPicker(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#FFFFFF', borderRadius: '24px 24px 0 0', padding: '28px 20px 40px', width: '100%' }}>
-            <p style={{ fontSize: '20px', fontWeight: 700, marginBottom: '20px' }}>🗣️ भाषा चुनें</p>
+          <div onClick={e => e.stopPropagation()} className="bg-white rounded-t-3xl p-6 w-full shadow-modal animate-slide-up">
+            <p style={{ fontSize: '18px', fontWeight: 800, marginBottom: '16px', color: '#0F172A' }}>🗣️ भाषा चुनें</p>
             {LANGUAGES.map(langOpt => (
-              <button key={langOpt.code} onClick={() => { 
+              <Tappable key={langOpt.code} onClick={() => { 
                   localStorage.setItem('user_language', langOpt.code);
                   updateUser({ language: langOpt.code }); 
                   setShowLangPicker(false); 
                 }}
-                style={{
-                  width: '100%', height: '60px', display: 'flex', alignItems: 'center', justifyItems: 'space-between',
-                  padding: '0 16px', borderRadius: '12px', border: 'none', cursor: 'pointer', marginBottom: '8px',
-                  background: user.language === langOpt.code ? '#E8F5E9' : '#F8F8F8',
-                  outline: user.language === langOpt.code ? '2px solid #2E7D32' : 'none'
-                }}>
+                className={`w-full h-14 flex items-center justify-between px-4 rounded-xl mb-2 border transition-all ${
+                  user.language === langOpt.code
+                    ? 'bg-teal-50 border-teal-600 text-teal-900 font-bold'
+                    : 'bg-slate-50 border-slate-200 text-slate-800'
+                }`}
+              >
                 <div style={{ textAlign: 'left', flex: 1 }}>
-                  <p style={{ fontSize: '18px', fontWeight: 700, color: '#0D1B0D', margin: 0 }}>{langOpt.name}</p>
-                  <p style={{ fontSize: '13px', color: '#757575', margin: 0 }}>{langOpt.subname}</p>
+                  <p style={{ fontSize: '16px', fontWeight: 700, margin: 0 }}>{langOpt.name}</p>
+                  <p style={{ fontSize: '12px', color: '#64748B', margin: 0 }}>{langOpt.subname}</p>
                 </div>
-                {user.language === langOpt.code && <span style={{ fontSize: '20px', color: '#2E7D32' }}>✓</span>}
-              </button>
+                {user.language === langOpt.code && <span style={{ fontSize: '18px', color: '#0F766E' }}>✓</span>}
+              </Tappable>
             ))}
           </div>
         </div>
@@ -194,35 +217,32 @@ export default function SettingsPage({ onNavigate }) {
 
       {/* Crop Picker */}
       {showCropPicker && (
-        <div style={{ position: 'fixed', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', background: 'rgba(0,0,0,0.55)', zIndex: 500, display: 'flex', alignItems: 'flex-end' }}
+        <div style={{ position: 'fixed', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', background: 'rgba(15,23,42,0.6)', zIndex: 900, display: 'flex', alignItems: 'flex-end' }}
           onClick={() => setShowCropPicker(false)}>
-          <div onClick={e => e.stopPropagation()} style={{ background: '#FFFFFF', borderRadius: '24px 24px 0 0', padding: '28px 20px 40px', width: '100%' }}>
-            <p style={{ fontSize: '20px', fontWeight: 700, marginBottom: '4px' }}>🌾 फसल चुनें</p>
-            <p style={{ fontSize: '14px', color: '#757575', marginBottom: '20px' }}>एक या अधिक फसलें चुन सकते हैं</p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '20px' }}>
+          <div onClick={e => e.stopPropagation()} className="bg-white rounded-t-3xl p-6 w-full shadow-modal animate-slide-up">
+            <p style={{ fontSize: '18px', fontWeight: 800, marginBottom: '4px', color: '#0F172A' }}>🌾 फसल चुनें</p>
+            <p style={{ fontSize: '13px', color: '#64748B', marginBottom: '16px' }}>एक या अधिक फसलें चुन सकते हैं</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '18px' }}>
               {ALL_CROPS.map(crop => {
                 const selected = selectedCrops.includes(crop.name);
                 return (
-                  <button key={crop.name}
+                  <Tappable key={crop.name}
                     onClick={() => setSelectedCrops(prev => selected ? prev.filter(c => c !== crop.name) : [...prev, crop.name])}
-                    style={{
-                      height: '64px', display: 'flex', alignItems: 'center', gap: '10px',
-                      padding: '0 16px', borderRadius: '12px', border: 'none', cursor: 'pointer',
-                      background: selected ? '#E8F5E9' : '#F8F8F8',
-                      outline: selected ? '2px solid #2E7D32' : '2px solid transparent',
-                      transition: 'all 200ms ease'
-                    }}>
-                    <span style={{ fontSize: '24px' }}>{crop.emoji}</span>
-                    <span style={{ fontSize: '16px', fontWeight: selected ? 700 : 400, color: selected ? '#1B5E20' : '#0D1B0D' }}>{crop.name}</span>
-                    {selected && <span style={{ marginLeft: 'auto', color: '#2E7D32', fontWeight: 700 }}>✓</span>}
-                  </button>
+                    className={`h-14 flex items-center gap-2.5 px-3.5 rounded-xl border text-left transition-all ${
+                      selected ? 'bg-teal-50 border-teal-600 font-bold text-teal-900' : 'bg-slate-50 border-slate-200 text-slate-800'
+                    }`}
+                  >
+                    <span style={{ fontSize: '20px' }}>{crop.emoji}</span>
+                    <span style={{ fontSize: '14px', flex: 1 }}>{crop.name}</span>
+                    {selected && <span style={{ color: '#0F766E', fontWeight: 700 }}>✓</span>}
+                  </Tappable>
                 );
               })}
             </div>
-            <button onClick={() => { updateUser({ crops: selectedCrops }); storage.set('user_crops', selectedCrops); setShowCropPicker(false); }}
-              style={{ width: '100%', height: '56px', background: 'linear-gradient(135deg, #1B5E20, #2E7D32)', color: '#FFFFFF', border: 'none', borderRadius: '14px', fontSize: '17px', fontWeight: 700, cursor: 'pointer', boxShadow: '0 6px 20px rgba(27,94,32,0.4)' }}>
+            <Tappable onClick={() => { updateUser({ crops: selectedCrops }); storage.set('user_crops', selectedCrops); setShowCropPicker(false); }}
+              className="w-full h-12 bg-teal-700 text-white rounded-xl text-base font-bold shadow-btn">
               ✅ सेव करें ({selectedCrops.length} फसल)
-            </button>
+            </Tappable>
           </div>
         </div>
       )}
@@ -230,18 +250,16 @@ export default function SettingsPage({ onNavigate }) {
       {/* Location Picker */}
       {showLocationPicker && (
         <div style={{
-          position: 'fixed', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', background: 'rgba(0,0,0,0.5)', zIndex: 1000,
+          position: 'fixed', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: '430px', background: 'rgba(15,23,42,0.6)', zIndex: 1000,
           display: 'flex', alignItems: 'flex-end'
         }} onClick={() => setShowLocationPicker(false)}>
-          <div onClick={e => e.stopPropagation()} style={{
-            background: '#FFFFFF', borderRadius: '24px 24px 0 0',
-            padding: '24px 20px 40px', width: '100%'
-          }}>
-            <p style={{ fontSize: '20px', fontWeight: 700, color: '#1A1A1A', marginBottom: '20px' }}>
-              📍 स्थान बदलें
+          <div onClick={e => e.stopPropagation()} className="bg-white rounded-t-3xl p-6 w-full shadow-modal animate-slide-up max-h-[85vh] overflow-y-auto">
+            <p style={{ fontSize: '18px', fontWeight: 800, color: '#0F172A', marginBottom: '16px' }}>
+              📍 स्थान बदलें (Change Location)
             </p>
 
-            <button
+            {/* GPS Option */}
+            <Tappable
               onClick={async () => {
                 setGpsLoading(true);
                 try {
@@ -249,128 +267,130 @@ export default function SettingsPage({ onNavigate }) {
                   if (loc) {
                     updateUser({ location: loc });
                     storage.set('user_location', loc);
-                    // Clear weather cache so it re-fetches for new location
                     storage.remove('weather_cache');
                     storage.remove('weather_cache_time');
                     setShowLocationPicker(false);
-                    window.location.reload();
                   }
                 } catch {
-                  alert('लोकेशन नहीं मिली। सेटिंग्स में GPS की अनुमति दें।');
+                  alert('GPS लोकेशन नहीं मिली। नीचे से राज्य व जिला चुनें।');
                 } finally {
                   setGpsLoading(false);
                 }
               }}
               disabled={gpsLoading}
-              style={{
-                width: '100%', height: '56px', background: gpsLoading ? '#A5D6A7' : '#2E7D32', color: '#FFFFFF',
-                border: 'none', borderRadius: '12px', fontSize: '17px', fontWeight: 600, cursor: gpsLoading ? 'default' : 'pointer',
-                marginBottom: '16px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
-              }}
+              className="w-full h-12 bg-teal-700 text-white rounded-xl text-sm font-bold shadow-btn flex items-center justify-center gap-2 mb-3"
             >
-              {gpsLoading
-                ? <><span style={{ display: 'inline-block', width: 20, height: 20, border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} /> लोकेशन मिल रही है...</>
-                : '📍 मेरी वर्तमान लोकेशन'
-              }
-            </button>
+              {gpsLoading ? 'लोकेशन मिल रही है...' : '📍 मेरी वर्तमान GPS लोकेशन'}
+            </Tappable>
 
-            <p style={{ textAlign: 'center', color: '#757575', marginBottom: '16px' }}>— या —</p>
+            <p style={{ textAlign: 'center', color: '#94A3B8', fontSize: '12px', margin: '10px 0' }}>— या राज्य व जिला चुनें —</p>
 
-            <input
-              value={cityInput}
-              onChange={e => setCityInput(e.target.value)}
-              placeholder="शहर का नाम लिखें... (जैसे: मेरठ)"
-              style={{
-                width: '100%', height: '52px', border: '2px solid #E0E0E0',
-                borderRadius: '12px', padding: '0 16px', fontSize: '16px',
-                boxSizing: 'border-box', outline: 'none'
-              }}
-              onFocus={e => e.target.style.border = '2px solid #2E7D32'}
-              onBlur={e => e.target.style.border = '2px solid #E0E0E0'}
-            />
+            {/* State & District Dropdown */}
+            <div className="space-y-3 mb-4">
+              <div>
+                <label className="text-xs text-slate-700 font-bold block mb-1">राज्य (State)</label>
+                <div className="relative">
+                  <select
+                    value={settingStateCode}
+                    onChange={(e) => {
+                      const code = e.target.value;
+                      setSettingStateCode(code);
+                      const sObj = INDIAN_STATES_AND_DISTRICTS.find(s => s.code === code);
+                      if (sObj?.districts?.[0]) setSettingDistrictName(sObj.districts[0].name);
+                    }}
+                    className="w-full appearance-none bg-slate-50 border-2 border-slate-200 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-800 focus:border-teal-600 outline-none pr-8"
+                  >
+                    {INDIAN_STATES_AND_DISTRICTS.map((s) => (
+                      <option key={s.code} value={s.code}>{s.state}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="absolute right-3 top-3 text-slate-400 pointer-events-none" />
+                </div>
+              </div>
 
-            <button
-              onClick={async () => {
-                if (!cityInput.trim()) return;
-                try {
-                  const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityInput)}&format=json&limit=1`, { headers: { 'User-Agent': 'MonsoonMitra/1.0' } });
-                  const data = await res.json();
-                  if (data[0]) {
-                    const loc = {
-                      lat: parseFloat(data[0].lat),
-                      lng: parseFloat(data[0].lon),
-                      city: cityInput,
-                      state: data[0].display_name.split(',').slice(-3, -2)[0]?.trim() || '',
-                      country: 'India'
-                    };
-                    updateUser({ location: loc });
-                    storage.set('user_location', loc);
-                    storage.remove('weather_cache');
-                    storage.remove('weather_cache_time');
-                    setShowLocationPicker(false);
-                    setCityInput('');
-                    window.location.reload();
-                  }
-                } catch (e) { alert('शहर नहीं मिला। फिर कोशिश करें।'); }
+              <div>
+                <label className="text-xs text-slate-700 font-bold block mb-1">जिला (District)</label>
+                <div className="relative">
+                  <select
+                    value={settingDistrictName}
+                    onChange={(e) => setSettingDistrictName(e.target.value)}
+                    className="w-full appearance-none bg-slate-50 border-2 border-slate-200 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-800 focus:border-teal-600 outline-none pr-8"
+                  >
+                    {currentSettingState.districts.map((d) => (
+                      <option key={d.name} value={d.name}>{d.name}</option>
+                    ))}
+                  </select>
+                  <ChevronDown size={14} className="absolute right-3 top-3 text-slate-400 pointer-events-none" />
+                </div>
+              </div>
+            </div>
+
+            <Tappable
+              onClick={() => {
+                const distObj = currentSettingState.districts.find(d => d.name === settingDistrictName) || currentSettingState.districts[0];
+                const loc = {
+                  lat: distObj.lat,
+                  lng: distObj.lng,
+                  city: distObj.name.split(' ')[0],
+                  state: currentSettingState.state.split(' ')[0],
+                  country: 'India'
+                };
+                updateUser({ location: loc });
+                storage.set('user_location', loc);
+                storage.remove('weather_cache');
+                storage.remove('weather_cache_time');
+                setShowLocationPicker(false);
               }}
-              style={{
-                width: '100%', height: '56px', background: '#FF8F00', color: '#FFFFFF',
-                border: 'none', borderRadius: '12px', fontSize: '17px', fontWeight: 600,
-                cursor: 'pointer', marginTop: '12px'
-              }}
+              className="w-full h-12 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-sm font-bold shadow-btn flex items-center justify-center gap-2"
             >
-              शहर खोजें
-            </button>
+              ✅ स्थान सुरक्षित करें ({settingDistrictName.split(' ')[0]})
+            </Tappable>
           </div>
         </div>
       )}
 
-      {/* Notifications */}
-      <div className="mx-4 mt-4" style={{ background: '#FFFFFF', borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)', marginBottom: '16px', overflow: 'hidden' }}>
-        <p style={{ fontSize: '13px', fontWeight: 600, color: '#757575', padding: '12px 16px 8px', margin: 0, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{t('notifications')}</p>
+      {/* Notifications section */}
+      <div className="mx-4 mt-4 bg-white rounded-2xl shadow-card overflow-hidden border border-slate-100">
+        <h3 className="text-sm font-bold text-slate-900 px-4 pt-4 pb-2">{t('notifications')}</h3>
         {[
-          { key: 'flood', icon: '🌊', label: 'बाढ़ की चेतावनी' },
-          { key: 'drought', icon: '🌡️', label: 'सूखे की चेतावनी' },
-          { key: 'irrigation', icon: '💧', label: 'सिंचाई याददाश्त' },
-          { key: 'weather', icon: '🌤️', label: 'मौसम अपडेट' },
-        ].map(item => (
-          <div key={item.key} style={{
-            height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            padding: '0 16px', borderBottom: '1px solid #F0F0F0'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '20px' }}>{item.icon}</span>
-              <span style={{ fontSize: '15px', color: '#1A1A1A' }}>{item.label}</span>
+          { key: 'flood', icon: '🚨', label: 'बाढ़ की चेतावनी' },
+          { key: 'drought', icon: '☀️', label: 'सूखे की चेतावनी' },
+          { key: 'irrigation', icon: '💧', label: 'सिंचाई रिमाइंडर' },
+          { key: 'weather', icon: '🌦️', label: 'दैनिक मौसम' },
+        ].map(n => (
+          <div key={n.key} className="h-14 flex items-center justify-between px-4 border-b border-slate-100">
+            <div className="flex items-center gap-3">
+              <span className="text-xl">{n.icon}</span>
+              <span className="text-sm text-slate-800 font-medium">{n.label}</span>
             </div>
-            <Toggle value={notifPrefs[item.key]} onChange={() => toggleNotif(item.key)} />
+            <Toggle value={notifPrefs[n.key]} onChange={() => toggleNotif(n.key)} />
           </div>
         ))}
       </div>
 
       {/* App Info */}
-      <div className="mx-4 mt-4 bg-white rounded-2xl shadow-card overflow-hidden">
-        <h3 className="text-base font-bold text-[#1A1A1A] px-4 pt-4 pb-2">{t('appInfo')}</h3>
-        <SettingsRow icon="📱" label={t('version')} value="1.0.0" />
+      <div className="mx-4 mt-4 bg-white rounded-2xl shadow-card overflow-hidden border border-slate-100">
+        <h3 className="text-sm font-bold text-slate-900 px-4 pt-4 pb-2">{t('appInfo')}</h3>
+        <SettingsRow icon="💧" label={t('version')} value="2.0.0 (JalRakshak)" />
         <SettingsRow icon="🔒" label={t('privacyPolicy')} chevron onClick={() => onNavigate('privacy')} />
         <SettingsRow icon="📋" label={t('termsOfService')} chevron onClick={() => onNavigate('terms')} />
         <SettingsRow icon="⭐" label={t('rateApp')} chevron onClick={() => window.open('https://play.google.com/store/apps', '_blank')} />
         <SettingsRow icon="📤" label={t('shareApp')} chevron onClick={handleShare} />
-        <SettingsRow icon="🐛" label={t('reportBug')} chevron onClick={() => window.open('mailto:msabhishekanni10@gmail.com?subject=Bug Report - Monsoon Mitra')} />
+        <SettingsRow icon="🐛" label={t('reportBug')} chevron onClick={() => window.open('mailto:msabhishekanni10@gmail.com?subject=Bug Report - JalRakshak')} />
       </div>
 
       {/* Danger Zone */}
-      <div className="mx-4 mt-4 px-4">
-        <button onClick={handleDelete} style={{
-          width: '100%', height: '56px', marginTop: '24px', marginBottom: '80px',
-          background: deleteConfirm ? '#C62828' : '#FFFFFF',
-          border: `2px solid ${deleteConfirm ? '#C62828' : '#FFCDD2'}`,
-          borderRadius: '12px', cursor: 'pointer',
-          fontSize: '15px', fontWeight: 600,
-          color: deleteConfirm ? '#FFFFFF' : '#C62828',
-          transition: 'all 300ms ease'
-        }}>
-          {deleteConfirm ? '⚠️ पक्का? एक बार और दबाएं — डेटा चला जाएगा' : '🗑️ सभी डेटा हटाएं'}
-        </button>
+      <div className="mx-4 mt-4 px-2">
+        <Tappable
+          onClick={handleDelete}
+          className={`w-full h-12 rounded-xl text-sm font-bold border transition-all mt-4 mb-20 ${
+            deleteConfirm
+              ? 'bg-red-600 text-white border-red-700 shadow-sm'
+              : 'bg-white text-red-600 border-red-200 hover:bg-red-50'
+          }`}
+        >
+          {deleteConfirm ? '⚠️ पुष्टि करें: सारा डेटा मिट जाएगा - फिर टैप करें' : 'सारा डेटा हटाएं (Reset App)'}
+        </Tappable>
       </div>
     </div>
   );

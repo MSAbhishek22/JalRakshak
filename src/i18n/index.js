@@ -4,6 +4,7 @@ import en from './en';
 import bn from './bn';
 import mr from './mr';
 import pa from './pa';
+import { T } from './translations';
 
 const languages = { hi, en, bn, mr, pa };
 
@@ -16,7 +17,13 @@ export const LANGUAGE_OPTIONS = [
 ];
 
 export function t(lang = 'hi', key) {
-  return languages[lang]?.[key] ?? languages.hi[key] ?? key;
+  return (
+    languages[lang]?.[key] ??
+    T[lang]?.[key] ??
+    languages.hi?.[key] ??
+    T.hi?.[key] ??
+    key
+  );
 }
 
 export function getLanguageName(code) {
@@ -25,3 +32,4 @@ export function getLanguageName(code) {
 }
 
 export default languages;
+

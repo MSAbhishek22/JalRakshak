@@ -1,8 +1,8 @@
 // src/i18n/en.js — English translations
 const en = {
-  appTitle: 'Monsoon Mitra',
-  appTag: "Farmer's Digital Companion",
-  farmerCompanion: "(Farmer's Digital Companion)",
+  appTitle: 'JalRakshak',
+  appTag: 'Water & Soil Guardian',
+  farmerCompanion: '(Water & Soil Guardian)',
   goodMorning: 'Good Morning!',
   goodAfternoon: 'Good Afternoon!',
   goodEvening: 'Good Evening!',

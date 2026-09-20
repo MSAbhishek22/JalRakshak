@@ -1,9 +1,9 @@
 // src/i18n/hi.js — Hindi translations (primary language)
 const hi = {
   // App
-  appTitle: 'मॉनसून मित्र',
-  appTag: 'किसान का डिजिटल साथी',
-  farmerCompanion: "(Farmer's Digital Companion)",
+  appTitle: 'जल रक्षक',
+  appTag: 'जल और मिट्टी का रक्षक',
+  farmerCompanion: '(Water & Soil Guardian)',
 
   // Greetings
   goodMorning: 'सुप्रभात!',

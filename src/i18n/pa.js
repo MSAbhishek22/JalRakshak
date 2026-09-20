@@ -3,8 +3,8 @@ import hi from './hi';
 
 const pa = {
   ...hi,
-  appTitle: 'ਮੌਨਸੂਨ ਮਿਤਰ',
-  appTag: 'ਕਿਸਾਨ ਦਾ ਡਿਜੀਟਲ ਸਾਥੀ',
+  appTitle: 'ਜਲ ਰੱਖਿਅਕ',
+  appTag: 'ਜਲ ਅਤੇ ਮਿੱਟੀ ਦਾ ਰੱਖਿਅਕ',
   goodMorning: 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ!',
   goodAfternoon: 'ਸਤ ਸ੍ਰੀ ਅਕਾਲ!',
   goodEvening: 'ਸ਼ੁਭ ਸੰਧਿਆ!',

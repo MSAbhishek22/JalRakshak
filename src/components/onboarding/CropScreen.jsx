@@ -1,7 +1,8 @@
 // src/components/onboarding/CropScreen.jsx — Section 6, Screen 2
-import React, { useState } from 'react';
+import React from 'react';
 import { CROPS, getCropName } from '../../utils/cropData';
 import { t } from '../../i18n/index';
+import Tappable from '../common/Tappable';
 
 export default function CropScreen({ selectedCrops, onSelect, customCrop, onCustomCropChange, language }) {
   const showCustomInput = selectedCrops.includes('other');
@@ -15,10 +16,10 @@ export default function CropScreen({ selectedCrops, onSelect, customCrop, onCust
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-surface-light">
       <div className="text-center pt-6 pb-4 px-4">
-        <h2 className="text-2xl font-bold text-[#1A1A1A]">{t(language, 'whatCrop')}</h2>
-        <p className="text-[15px] text-[#757575] mt-2" style={{ lineHeight: 1.75 }}>
+        <h2 className="text-2xl font-black text-slate-900">{t(language, 'whatCrop')}</h2>
+        <p className="text-sm text-slate-600 mt-2 leading-relaxed">
           {t(language, 'whatCropSub')}
         </p>
       </div>
@@ -27,30 +28,30 @@ export default function CropScreen({ selectedCrops, onSelect, customCrop, onCust
         {CROPS.map(crop => {
           const isSelected = selectedCrops.includes(crop.id);
           return (
-            <button
+            <Tappable
               key={crop.id}
               onClick={() => toggleCrop(crop.id)}
-              className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 shadow-card tap-feedback transition-all duration-200 ${
+              className={`relative flex flex-col items-center justify-center p-4 rounded-2xl border-2 shadow-card transition-all duration-200 ${
                 isSelected
-                  ? 'border-primary-800 bg-primary-50'
-                  : 'border-[#E0E0E0] bg-white'
+                  ? 'border-teal-700 bg-teal-50 shadow-btn'
+                  : 'border-slate-200 bg-white hover:border-slate-300'
               }`}
               style={{ minHeight: '100px' }}
               id={`crop-${crop.id}`}
             >
               {isSelected && (
-                <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary-800 flex items-center justify-center animate-scale-in">
-                  <span className="text-white text-xs">✓</span>
+                <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-teal-700 flex items-center justify-center animate-scale-in">
+                  <span className="text-white text-xs font-bold">✓</span>
                 </div>
               )}
               <span className="text-[32px]">{crop.emoji}</span>
-              <span className="text-base font-semibold text-[#1A1A1A] mt-1">
+              <span className={`text-sm font-bold mt-1 ${isSelected ? 'text-teal-900' : 'text-slate-800'}`}>
                 {getCropName(crop.id, language)}
               </span>
               {language !== 'hi' && language !== 'en' && (
-                <span className="text-xs text-[#757575]">{crop.hi}</span>
+                <span className="text-xs text-slate-500">{crop.hi}</span>
               )}
-            </button>
+            </Tappable>
           );
         })}
       </div>
@@ -63,7 +64,7 @@ export default function CropScreen({ selectedCrops, onSelect, customCrop, onCust
             value={customCrop}
             onChange={(e) => onCustomCropChange(e.target.value)}
             placeholder={t(language, 'typeCropName')}
-            className="w-full px-4 py-3 border-2 border-primary-800 rounded-lg text-base"
+            className="w-full px-4 py-3 border-2 border-teal-600 rounded-xl text-sm focus:outline-none bg-white text-slate-800"
             id="custom-crop-input"
           />
         </div>

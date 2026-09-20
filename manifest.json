@@ -1,12 +1,12 @@
 {
-  "name": "Monsoon Mitra - किसान का साथी",
-  "short_name": "Monsoon Mitra",
-  "description": "Weather-aware irrigation advisory for Indian farmers in Hindi and regional languages",
+  "name": "JalRakshak — जल रक्षक",
+  "short_name": "JalRakshak",
+  "description": "AI-powered water-and-soil guardian for India's smallholder farmers in Hindi and regional languages",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#1B5E20",
-  "theme_color": "#2E7D32",
+  "background_color": "#0F766E",
+  "theme_color": "#0F766E",
   "lang": "hi",
   "dir": "ltr",
   "categories": ["utilities", "productivity", "weather"],
@@ -26,14 +26,14 @@
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "Home Screen - Weather & Irrigation Advice"
+      "label": "Home Screen — Water Savings & Irrigation Advisory"
     },
     {
       "src": "/screenshots/screenshot-mobile-2.png",
       "sizes": "390x844",
       "type": "image/png",
       "form_factor": "narrow",
-      "label": "AI Sahayak - Chat Interface"
+      "label": "AI Sahayak — Farming Chat Interface"
     }
   ],
   "shortcuts": [

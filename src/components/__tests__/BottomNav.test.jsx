@@ -7,7 +7,8 @@ vi.mock('../../context/AppContext', () => ({
     activeTab: 'home',
     setActiveTab: vi.fn(),
     user: { language: 'hi' }
-  })
+  }),
+  useT: () => (k) => k
 }));
 
 // Import AFTER mock

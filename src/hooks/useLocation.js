@@ -28,7 +28,7 @@ export function useLocation() {
           try {
             const res = await fetch(
               `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=en`,
-              { headers: { 'User-Agent': 'MonsoonMitra/1.0' } }
+              { headers: { 'User-Agent': 'JalRakshak/1.0' } }
             );
             if (res.ok) {
               const data = await res.json();

@@ -16,8 +16,8 @@ describe('Savings Calculator', () => {
     expect(calculateTotalSavings([])).toBe(0);
   });
 
-  it('should calculate water saved correctly (avg 5000L per hr)', () => {
-    // 2 skip events * 8000 = 16000
-    expect(calculateWaterLitersSaved(sampleLog)).toBe(16000);
+  it('should calculate water saved correctly (avg 22,000L per cycle for 1 ha)', () => {
+    // 2 skip events * 22000 = 44000
+    expect(calculateWaterLitersSaved(sampleLog)).toBe(44000);
   });
 });

@@ -3,8 +3,8 @@ import hi from './hi';
 
 const bn = {
   ...hi,
-  appTitle: 'মনসুন মিত্র',
-  appTag: 'কৃষকের ডিজিটাল সাথী',
+  appTitle: 'জলরক্ষক',
+  appTag: 'জল ও মাটির অভিভাবক',
   goodMorning: 'সুপ্রভাত!',
   goodAfternoon: 'নমস্কার!',
   goodEvening: 'শুভ সন্ধ্যা!',

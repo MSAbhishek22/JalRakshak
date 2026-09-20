@@ -1,9 +1,11 @@
-// src/components/onboarding/OnboardingWrapper.jsx — Section 6 spec
+// src/components/onboarding/OnboardingWrapper.jsx — Section 6 spec with JalRakshak design tokens
 import React, { useState } from 'react';
+import { ArrowLeft } from 'lucide-react';
 import LanguageScreen from './LanguageScreen';
 import CropScreen from './CropScreen';
 import LocationScreen from './LocationScreen';
 import { trackEvent, EVENTS } from '../../firebase/analytics';
+import Tappable from '../common/Tappable';
 
 export default function OnboardingWrapper({ onComplete }) {
   const [step, setStep] = useState(0);
@@ -44,19 +46,19 @@ export default function OnboardingWrapper({ onComplete }) {
   ];
 
   return (
-    <div className="fixed inset-0 z-[500] bg-white flex flex-col">
+    <div className="fixed inset-0 z-[500] bg-surface-light flex flex-col">
       {/* Header with progress dots and back button */}
       <div className="flex items-center justify-between px-4 pt-4 pb-2">
         {/* Back button */}
-        <div className="w-14 h-14 flex items-center justify-center">
+        <div className="w-12 h-12 flex items-center justify-center">
           {step > 0 && (
-            <button
+            <Tappable
               onClick={handleBack}
-              className="w-14 h-14 flex items-center justify-center tap-feedback"
-              aria-label="Back"
+              className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-700"
+              ariaLabel="Back"
             >
-              <span className="text-2xl text-[#4A4A4A]">←</span>
-            </button>
+              <ArrowLeft size={20} />
+            </Tappable>
           )}
         </div>
 
@@ -67,15 +69,15 @@ export default function OnboardingWrapper({ onComplete }) {
               key={i}
               className={`h-2 rounded-full transition-all duration-300 ${
                 i === step
-                  ? 'w-6 bg-primary-800'
-                  : 'w-2 bg-[#E0E0E0]'
+                  ? 'w-7 bg-teal-700'
+                  : 'w-2 bg-slate-200'
               }`}
               style={{ transitionTimingFunction: 'cubic-bezier(0.34,1.56,0.64,1)' }}
             />
           ))}
         </div>
 
-        <div className="w-14" />
+        <div className="w-12" />
       </div>
 
       {/* Screen content */}
@@ -88,14 +90,14 @@ export default function OnboardingWrapper({ onComplete }) {
       {/* Continue button (screens 0 and 1 only) */}
       {step < 2 && (
         <div className="px-6 pb-6 safe-bottom">
-          <button
+          <Tappable
             onClick={handleNext}
             disabled={(step === 0 && !language) || (step === 1 && crops.length === 0)}
-            className="w-full h-14 rounded-xl font-semibold text-lg text-white bg-primary-800 shadow-btn tap-feedback disabled:opacity-50 disabled:shadow-none"
+            className="w-full h-14 rounded-2xl font-bold text-base text-white bg-teal-700 hover:bg-teal-800 shadow-btn disabled:opacity-50 disabled:shadow-none"
             id="onboarding-continue-btn"
           >
             {language === 'hi' || !language ? 'आगे बढ़ें →' : 'Continue →'}
-          </button>
+          </Tappable>
         </div>
       )}
     </div>

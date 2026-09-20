@@ -54,7 +54,7 @@ export async function reverseGeocode(lat, lng) {
   try {
     const res = await fetch(
       `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&addressdetails=1`,
-      { headers: { 'Accept-Language': 'en', 'User-Agent': 'MonsoonMitra/1.0' } }
+      { headers: { 'Accept-Language': 'en', 'User-Agent': 'JalRakshak/1.0' } }
     );
     if (!res.ok) return null;
     const data = await res.json();

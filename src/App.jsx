@@ -1,4 +1,5 @@
 import { useState, useEffect, Suspense, lazy } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AppProvider, useApp } from './context/AppContext';
 import { WeatherProvider } from './context/WeatherContext';
 import SplashScreen from './components/common/SplashScreen';
@@ -8,8 +9,7 @@ import AlertBanner from './components/alerts/AlertBanner';
 import { storage } from './utils/storage';
 import { measureCoreWebVitals } from './utils/performance';
 
-
-// Lazy load pages for faster initial load
+// Lazy load pages for fast initial load
 const HomePage = lazy(() => import('./pages/HomePage'));
 const WeatherPage = lazy(() => import('./pages/WeatherPage'));
 const AIPage = lazy(() => import('./pages/AIPage'));
@@ -17,9 +17,13 @@ const SavingsPage = lazy(() => import('./pages/SavingsPage'));
 const SettingsPage = lazy(() => import('./pages/SettingsPage'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const ImpactDashboard = lazy(() => import('./pages/ImpactDashboard'));
+const MandiPricePage = lazy(() => import('./pages/MandiPricePage'));
+const CommunityTipsPage = lazy(() => import('./pages/CommunityTipsPage'));
+const SchemesPage = lazy(() => import('./pages/SchemesPage'));
 
 function AppShell() {
-  const { activeTab, setActiveTab, user, completeOnboarding, alerts, dismissAlert } = useApp();
+  const { activeTab, setActiveTab, user, completeOnboarding, alerts, dismissAlert, onboardingComplete } = useApp();
 
   const [currentPage, setCurrentPage] = useState('app'); // 'app' | 'privacy' | 'terms'
   const [showSplash, setShowSplash] = useState(true);
@@ -27,7 +31,8 @@ function AppShell() {
   const [installPrompt, setInstallPrompt] = useState(null);
   const [updateAvailable, setUpdateAvailable] = useState(false);
 
-  const onboardingDone = !!storage.get('onboarding_complete');
+  const isDemo = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('demo') === 'true';
+  const onboardingDone = onboardingComplete || isDemo || !!storage.get('onboarding_complete');
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -75,7 +80,7 @@ function AppShell() {
 
   const navigateTo = (page) => {
     if (page === 'privacy' || page === 'terms') {
-      window.history.pushState({ page }, '', `/${page}`);
+      window.history.pushState({ page, tab: activeTab }, '', `/${page}`);
       setCurrentPage(page);
     } else {
       setCurrentPage('app');
@@ -83,9 +88,18 @@ function AppShell() {
   };
 
   const goBack = () => {
-    setCurrentPage('app');
-    setActiveTab('settings');
-    window.history.pushState({}, '', '/');
+    if (currentPage !== 'app') {
+      setCurrentPage('app');
+      setActiveTab('settings');
+      return;
+    }
+    if (activeTab !== 'home') {
+      if (typeof window !== 'undefined' && window.history.length > 1) {
+        window.history.back();
+      } else {
+        setActiveTab('home');
+      }
+    }
   };
 
   if (showSplash) {
@@ -96,7 +110,6 @@ function AppShell() {
     return (
       <OnboardingWrapper
         onComplete={(userData) => {
-          // Persist user data then mark onboarding complete
           if (userData.language) localStorage.setItem('user_language', userData.language);
           if (userData.crops) localStorage.setItem('user_crops', JSON.stringify(userData.crops));
           if (userData.name) localStorage.setItem('user_name', userData.name);
@@ -108,32 +121,35 @@ function AppShell() {
   }
 
   const isLegalPage = currentPage === 'privacy' || currentPage === 'terms';
+  const isImpactTab = activeTab === 'impact';
+  const isSubPage = activeTab === 'mandi' || activeTab === 'community';
 
   return (
     <div style={{
-      maxWidth: '430px',
+      maxWidth: isImpactTab ? '100%' : '430px',
       margin: '0 auto',
       minHeight: '100dvh',
-      background: '#F0F7F0',
+      background: isImpactTab ? '#0F172A' : '#FFFBF5',
       display: 'flex',
       flexDirection: 'column',
       position: 'relative',
       overflow: 'hidden',
+      transition: 'max-width 250ms ease, background 250ms ease',
     }}>
       {/* Update banner */}
       {updateAvailable && (
         <div style={{
           position: 'fixed', top: 0, left: '50%', transform: 'translateX(-50%)',
-          width: '100%', maxWidth: '430px',
-          background: 'linear-gradient(135deg, #1B5E20, #2E7D32)',
+          width: '100%', maxWidth: isImpactTab ? '100%' : '430px',
+          background: 'linear-gradient(135deg, #0F766E, #0D9488)',
           padding: '12px 16px', zIndex: 600,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center'
         }}>
           <span style={{ fontSize: '14px', color: '#FFFFFF', fontWeight: 600 }}>
-            🌾 नया अपडेट उपलब्ध है!
+            💧 JalRakshak नया अपडेट उपलब्ध है!
           </span>
           <button onClick={() => window.location.reload()} style={{
-            background: '#FFFFFF', color: '#1B5E20', border: 'none',
+            background: '#FFFFFF', color: '#0F766E', border: 'none',
             borderRadius: '8px', padding: '6px 14px', fontSize: '13px',
             fontWeight: 700, cursor: 'pointer'
           }}>
@@ -151,37 +167,49 @@ function AppShell() {
         />
       )}
 
-
-      {/* Page content */}
+      {/* Page content with Framer Motion transitions */}
       <div
-        key={isLegalPage ? currentPage : activeTab}
         style={{
           flex: 1, overflowY: 'auto', overflowX: 'hidden',
-          paddingBottom: isLegalPage ? '24px' : 'calc(72px + env(safe-area-inset-bottom))',
-          animation: 'pageFadeIn 280ms ease forwards',
+          paddingBottom: 'calc(76px + env(safe-area-inset-bottom))',
           WebkitOverflowScrolling: 'touch',
         }}
         className="hide-scrollbar"
       >
         <Suspense fallback={<PageSkeleton />}>
-          {isLegalPage ? (
-            currentPage === 'privacy'
-              ? <PrivacyPolicy onBack={goBack} />
-              : <TermsOfService onBack={goBack} />
-          ) : (
-            <>
-              {activeTab === 'home' && <HomePage />}
-              {activeTab === 'weather' && <WeatherPage />}
-              {activeTab === 'ai' && <AIPage />}
-              {activeTab === 'savings' && <SavingsPage />}
-              {activeTab === 'settings' && <SettingsPage onNavigate={navigateTo} />}
-            </>
-          )}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={isLegalPage ? currentPage : activeTab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+              style={{ width: '100%', minHeight: '100%' }}
+            >
+              {isLegalPage ? (
+                currentPage === 'privacy'
+                  ? <PrivacyPolicy onBack={goBack} />
+                  : <TermsOfService onBack={goBack} />
+              ) : (
+                <>
+                  {activeTab === 'home' && <HomePage />}
+                  {activeTab === 'weather' && <WeatherPage onBack={goBack} />}
+                  {activeTab === 'ai' && <AIPage onBack={goBack} />}
+                  {activeTab === 'savings' && <SavingsPage onBack={goBack} />}
+                  {activeTab === 'impact' && <ImpactDashboard onBack={goBack} />}
+                  {activeTab === 'settings' && <SettingsPage onNavigate={navigateTo} onBack={goBack} />}
+                  {activeTab === 'mandi' && <MandiPricePage onBack={goBack} />}
+                  {activeTab === 'community' && <CommunityTipsPage onBack={goBack} />}
+                  {activeTab === 'schemes' && <SchemesPage onBack={goBack} />}
+                </>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </Suspense>
       </div>
 
-      {/* Bottom nav — hidden on legal pages */}
-      {!isLegalPage && <BottomNav />}
+      {/* Bottom nav — always reachable across all screens except onboarding */}
+      <BottomNav />
 
       {/* PWA install banner */}
       {showInstallBanner && installPrompt && (
@@ -189,18 +217,18 @@ function AppShell() {
           position: 'fixed', bottom: 'calc(72px + env(safe-area-inset-bottom) + 12px)',
           left: '50%', transform: 'translateX(-50%)',
           width: 'calc(100% - 32px)', maxWidth: '430px',
-          background: '#FFFFFF', border: '2px solid #2E7D32',
+          background: '#FFFFFF', border: '2px solid #0F766E',
           borderRadius: '16px', padding: '16px',
-          boxShadow: '0 8px 24px rgba(27,94,32,0.2)',
+          boxShadow: '0 8px 24px rgba(15, 118, 110, 0.2)',
           display: 'flex', alignItems: 'center', gap: '12px',
           zIndex: 50, animation: 'slideUpFade 300ms ease'
         }}>
           <span style={{ fontSize: '32px' }}>📲</span>
           <div style={{ flex: 1 }}>
-            <p style={{ fontSize: '15px', fontWeight: 700, color: '#0D1B0D', margin: 0 }}>
-              ऐप इंस्टॉल करें
+            <p style={{ fontSize: '15px', fontWeight: 700, color: '#0F172A', margin: 0 }}>
+              JalRakshak इंस्टॉल करें
             </p>
-            <p style={{ fontSize: '13px', color: '#5A7A5A', margin: '2px 0 0' }}>
+            <p style={{ fontSize: '13px', color: '#64748B', margin: '2px 0 0' }}>
               बिना इंटरनेट भी काम करेगा
             </p>
           </div>
@@ -210,7 +238,7 @@ function AppShell() {
             setInstallPrompt(null);
             setShowInstallBanner(false);
           }} style={{
-            background: 'linear-gradient(135deg, #1B5E20, #2E7D32)',
+            background: 'linear-gradient(135deg, #0F766E, #14B8A6)',
             color: '#FFFFFF', border: 'none', borderRadius: '10px',
             padding: '10px 16px', fontSize: '14px', fontWeight: 700, cursor: 'pointer'
           }}>
@@ -218,7 +246,7 @@ function AppShell() {
           </button>
           <button onClick={() => setShowInstallBanner(false)} style={{
             background: 'none', border: 'none', fontSize: '22px',
-            cursor: 'pointer', color: '#BDBDBD', padding: '4px',
+            cursor: 'pointer', color: '#94A3B8', padding: '4px',
             lineHeight: 1, position: 'relative'
           }}>×</button>
         </div>
@@ -231,7 +259,7 @@ function PageSkeleton() {
   return (
     <div style={{ padding: '20px 16px' }}>
       {[1, 2, 3].map(i => (
-        <div key={i} className="skeleton" style={{ height: '100px', borderRadius: '16px', marginBottom: '16px', background: '#e0e0e0' }} />
+        <div key={i} className="skeleton" style={{ height: '110px', borderRadius: '20px', marginBottom: '16px' }} />
       ))}
     </div>
   );

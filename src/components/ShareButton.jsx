@@ -12,7 +12,7 @@ const ShareButton = ({ text, language, theme }) => {
     } else {
       // Fallback to WhatsApp
       const whatsappText = encodeURIComponent(
-        `${language === 'HI' ? '🌾 मौसम सलाह:' : '🌾 Weather Advice:'}\n\n${text}\n\n${language === 'HI' ? 'मॉनसून मित्र ऐप से' : 'From Monsoon Mitra App'}`
+        `${language === 'HI' ? '💧 मौसम व सिंचाई सलाह:' : '💧 Weather & Irrigation Advice:'}\n\n${text}\n\n${language === 'HI' ? 'जल रक्षक ऐप से' : 'From JalRakshak App'}`
       )
       const whatsappUrl = `https://wa.me/?text=${whatsappText}`
       window.open(whatsappUrl, '_blank')

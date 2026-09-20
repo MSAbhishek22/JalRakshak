@@ -70,8 +70,8 @@ export default function PrivacyPolicy({ onBack }) {
         </p>
 
         <Section title="1. परिचय / Introduction">
-          <p>Monsoon Mitra एक मुफ्त किसान सहायक ऐप है जो भारतीय किसानों को मौसम-आधारित सिंचाई सलाह देता है।</p>
-          <p>Monsoon Mitra is a free farmer assistant app providing weather-based irrigation advice to Indian farmers. This policy explains what data we collect and how we use it.</p>
+          <p>JalRakshak (जल रक्षक) एक मुफ्त किसान सहायक ऐप है जो भारतीय किसानों को मौसम-आधारित जल और मिट्टी संरक्षण सलाह देता है।</p>
+          <p>JalRakshak is a free farmer assistant app providing weather-aware water and soil advisory to Indian farmers. This policy explains what data we collect and how we use it.</p>
           <p><strong>Built together by MS Abhishek & Aayushi Goel</strong></p>
         </Section>
 

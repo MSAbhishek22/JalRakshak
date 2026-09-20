@@ -26,7 +26,7 @@ if (messaging) {
     console.log('[firebase-messaging-sw] Background message received:', payload);
 
     const alertType = payload.data?.type || 'general';
-    const notificationTitle = payload.notification?.title || 'Monsoon Mitra Alert';
+    const notificationTitle = payload.notification?.title || 'JalRakshak Alert';
     const notificationBody = payload.notification?.body || 'नई जानकारी उपलब्ध है';
 
     // Critical flood alert: max vibration + require interaction
@@ -99,7 +99,7 @@ self.addEventListener('push', (event) => {
 
   try {
     const data = event.data.json();
-    const title = data.notification?.title || '🌾 Monsoon Mitra';
+    const title = data.notification?.title || '💧 JalRakshak';
     const body = data.notification?.body || 'नई जानकारी उपलब्ध है';
     const alertType = data.data?.type || 'general';
 

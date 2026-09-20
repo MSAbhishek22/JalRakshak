@@ -20,20 +20,20 @@ export default function SplashScreen({ onComplete }) {
   return (
     <div
       className={`fixed inset-0 flex flex-col items-center justify-center transition-opacity duration-300 ${fadeOut ? 'opacity-0' : 'opacity-100'}`}
-      style={{ background: 'linear-gradient(180deg, #1B5E20 0%, #2E7D32 100%)', zIndex: 9999 }}
+      style={{ background: 'linear-gradient(180deg, #0F766E 0%, #115E59 50%, #0F172A 100%)', zIndex: 9999 }}
     >
       <div className="flex flex-col items-center gap-6">
-        <span className="animate-wave" style={{ fontSize: '72px', lineHeight: 1 }}>🌾</span>
+        <span className="animate-wave" style={{ fontSize: '72px', lineHeight: 1 }}>💧</span>
 
         <div className="text-center animate-fade-in" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
           <h1 style={{ fontSize: '32px', fontWeight: 800, color: '#FFFFFF', letterSpacing: '0.5px' }}>
-            Monsoon Mitra
+            JalRakshak
           </h1>
-          <p style={{ fontSize: '16px', color: 'rgba(255,255,255,0.85)', marginTop: '8px', lineHeight: 1.75 }}>
-            किसान का डिजिटल साथी
+          <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.92)', marginTop: '8px', lineHeight: 1.75, fontWeight: 600 }}>
+            जल और मिट्टी का रक्षक
           </p>
-          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)', marginTop: '4px' }}>
-            (Farmer's Digital Companion)
+          <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.7)', marginTop: '4px' }}>
+            (Water & Soil Guardian)
           </p>
         </div>
 
@@ -45,7 +45,7 @@ export default function SplashScreen({ onComplete }) {
               style={{
                 width: '10px',
                 height: '10px',
-                background: '#FFFFFF',
+                background: '#38BDF8',
                 animationDelay: `${i * 300}ms`,
                 animationDuration: '1.2s'
               }}

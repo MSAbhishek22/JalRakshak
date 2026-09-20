@@ -19,9 +19,9 @@ const TopBar = ({ language, onLanguageToggle, theme, onThemeToggle, onLocationCh
           <div className="flex items-center space-x-4 flex-1">
             <div className="flex-shrink-0">
               <h1 className={`mobile-heading title-underline ${ theme === 'light' ? 'text-farmer-dark' : 'text-white' }`}>
-                🌾 {language === 'HI' ? 'मॉनसून मित्र' : 'Monsoon Mitra'}
+                💧 {language === 'HI' ? 'जल रक्षक' : 'JalRakshak'}
               </h1>
-              <p className={`${ theme === 'light' ? 'text-green-700' : 'text-green-300' } text-xs md:text-sm`}>{language === 'HI' ? 'किसानों का मौसम साथी' : "Farmer's Weather Companion"}</p>
+              <p className={`${ theme === 'light' ? 'text-teal-700' : 'text-teal-300' } text-xs md:text-sm`}>{language === 'HI' ? 'जल और मिट्टी का रक्षक' : 'Water & Soil Guardian'}</p>
             </div>
             <div className="hidden md:block flex-1 max-w-xs">
               <LocationSearch language={language} theme={theme} onLocationChange={onLocationChange} />
