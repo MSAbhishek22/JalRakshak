@@ -190,7 +190,7 @@ export default async function handler(req, res) {
   };
 
   try {
-    const candidateModels = ['gemini-flash-latest', 'gemini-3.6-flash'];
+    const candidateModels = ['gemini-3.5-flash', 'gemini-3.6-flash', 'gemini-flash-latest', 'gemini-flash-lite-latest'];
     let replyText = null;
     let usageMetadata = null;
     let lastError = null;
@@ -213,14 +213,20 @@ export default async function handler(req, res) {
         });
 
         const geminiData = await geminiRes.json();
+        const parts = geminiData?.candidates?.[0]?.content?.parts || [];
+        const extracted = parts
+          .filter(p => typeof p.text === 'string')
+          .map(p => p.text)
+          .join('')
+          .trim();
 
-        if (geminiRes.ok && geminiData?.candidates?.[0]?.content?.parts?.[0]?.text) {
-          replyText = geminiData.candidates[0].content.parts[0].text;
+        if (geminiRes.ok && extracted) {
+          replyText = extracted;
           usageMetadata = geminiData.usageMetadata || null;
           console.log(`Gemini response received from ${model}. Reply length: ${replyText.length}`);
           break;
         } else {
-          lastError = geminiData?.error?.message || `HTTP ${geminiRes.status}`;
+          lastError = geminiData?.error?.message || geminiData?.candidates?.[0]?.finishReason || `HTTP ${geminiRes.status}`;
           console.warn(`[chat.js] Gemini model ${model} failed: ${lastError}`);
         }
       } catch (err) {
